@@ -16,7 +16,7 @@ def decode_sensor_data(data: bytes) -> dict:
     raw_voltage = int.from_bytes(data[0:2], byteorder="little")
     raw_current = int.from_bytes(data[2:4], byteorder="little")
 
-    voltage = raw_voltage * 0.1
+    voltage = raw_voltage * 0.01
     current = raw_current * 0.1
 
     return {
