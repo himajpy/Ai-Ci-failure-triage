@@ -8,6 +8,8 @@ from triage_agent.log_parser import parse_log
 from triage_agent.git_context import get_git_context
 from triage_agent.failure_classifier import classify_failure
 
+from collections import Counter
+
 
 def run_diagnostics(log_file: str, base_commit: str) -> dict:
     """Execute the complete diagnostic pipeline."""
@@ -24,13 +26,20 @@ def run_diagnostics(log_file: str, base_commit: str) -> dict:
         git_report
     )
 
-    # 4. Assemble final report
+    # 4. Count changed file categories
+    file_categories = Counter(
+        item["category"]
+        for item in git_report["categorized_changed_files"]
+    )
+
+    # 5. Assemble final report
     return {
         "project": "AI-CI-Failure-Triage",
         "summary": {
             "total_failures": log_report["error_count"],
             "changed_files": len(git_report["changed_files"]),
-            "diagnoses": classification["failure_count"]
+            "diagnoses": classification["failure_count"],
+            "changed_file_categories": dict(file_categories)
         },
         "failures": log_report["failures"],
         "git_context": git_report,
