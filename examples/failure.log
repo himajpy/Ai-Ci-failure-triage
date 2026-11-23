@@ -1,0 +1,30 @@
+============================= test session starts ==============================
+platform linux -- Python 3.14.7, pytest-9.2.0, pluggy-1.7.0 -- /home/icardi/Projects/Ai-Ci-failure-triage/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/icardi/Projects/Ai-Ci-failure-triage
+collecting ... collected 2 items
+
+tests/test_sensor_decoder.py::test_decode_voltage_and_current FAILED     [ 50%]
+tests/test_sensor_decoder.py::test_invalid_can_message PASSED            [100%]
+
+=================================== FAILURES ===================================
+_______________________ test_decode_voltage_and_current ________________________
+
+    def test_decode_voltage_and_current():
+    
+        data = bytes([
+            0x88, 0x13,
+            0x10, 0x27,
+            0x00, 0x00,
+            0x00, 0x00
+        ])
+    
+        result = decode_sensor_data(data)
+    
+>       assert result["voltage"] == 500.0
+E       assert 50.0 == 500.0
+
+tests/test_sensor_decoder.py:16: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_sensor_decoder.py::test_decode_voltage_and_current - assert...
+========================= 1 failed, 1 passed in 0.01s ==========================
