@@ -35,3 +35,40 @@ def test_structured_failure_extraction():
     assert failure["line"] == 16
     assert failure["actual"] == "50.0"
     assert failure["expected"] == "500.0"
+
+
+def test_extract_multiple_failures_independently():
+
+    from triage_agent.log_parser import extract_failures
+
+    log_content = """
+=================================== FAILURES ===================================
+
+________________________ test_voltage _________________________
+
+E       assert 50.0 == 500.0
+tests/test_sensor_decoder.py:16: AssertionError
+
+________________________ test_current _________________________
+
+E       assert 10.0 == 100.0
+tests/test_sensor_decoder.py:28: AssertionError
+
+================================ short test summary info ========================
+FAILED tests/test_sensor_decoder.py::test_voltage - AssertionError
+FAILED tests/test_sensor_decoder.py::test_current - AssertionError
+"""
+
+    failures = extract_failures(log_content)
+
+    assert len(failures) == 2
+
+    assert failures[0]["test_name"] == "test_voltage"
+    assert failures[0]["line"] == 16
+    assert failures[0]["actual"] == "50.0"
+    assert failures[0]["expected"] == "500.0"
+
+    assert failures[1]["test_name"] == "test_current"
+    assert failures[1]["line"] == 28
+    assert failures[1]["actual"] == "10.0"
+    assert failures[1]["expected"] == "100.0"
